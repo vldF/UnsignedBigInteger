@@ -58,18 +58,14 @@ public class UnsignedBigInteger {
         value.add(digit);
     }
 
+    private void shift(int n) {
+        for (int i = 0; i < n; i++)
+            value.add(0, 0);
+    }
+
     private int getDigitCount() {
         if (digitCount == -1) digitCount = value.size();
         return digitCount; // even if value.size() more than Integer.MAX_VALUE, return Integer.MAX_VALUE. Methods below will be right
-    }
-
-    private UnsignedBigInteger copy() {
-        try {
-            return (UnsignedBigInteger) this.clone();
-        } catch (CloneNotSupportedException e) {
-            e.printStackTrace();
-        }
-        return null;
     }
 
     public static UnsignedBigInteger add(UnsignedBigInteger a, UnsignedBigInteger b) {
@@ -110,6 +106,39 @@ public class UnsignedBigInteger {
             transfer = newValue < 0 ? (int) Math.floor(newValue * 1.0 / base) : 0;
             newValue = Math.floorMod(newValue, base);
             res.addDigit(newValue);
+        }
+        return res;
+    }
+
+    public static UnsignedBigInteger mulByInt(UnsignedBigInteger a, long b) {
+        UnsignedBigInteger res = new UnsignedBigInteger();
+        Iterator<Integer> aIter = a.getIterable();
+
+        int transfer = 0;
+        while (aIter.hasNext()) {
+            long newVal = aIter.next() * b + transfer;
+            transfer = (int) (newVal / base);
+            res.addDigit((int) (newVal % base));
+        }
+
+        if (transfer != 0) {
+            res.addDigit(transfer);
+        }
+
+        return res;
+    }
+
+    public static UnsignedBigInteger mul(UnsignedBigInteger a, UnsignedBigInteger b) {
+        UnsignedBigInteger res = new UnsignedBigInteger();
+
+        Iterator<Integer> aIter = a.getIterable();
+
+        int shift = 0;
+        while (aIter.hasNext()) {
+            UnsignedBigInteger newNum = mulByInt(b, aIter.next());
+            newNum.shift(shift);
+            res = UnsignedBigInteger.add(res, newNum);
+            shift++;
         }
         return res;
     }

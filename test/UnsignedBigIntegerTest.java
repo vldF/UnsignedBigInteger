@@ -58,4 +58,25 @@ class UnsignedBigIntegerTest {
         Assert.assertEquals(subtract, UnsignedBigInteger.subtract(a, b).toString());
     }
 
+    @Test
+    void addAndSubtractTest() {
+        for (int i = 0; i < 10000; i++) {
+            UnsignedBigInteger first = new UnsignedBigInteger(generateBigIntString(1000));
+            UnsignedBigInteger second = new UnsignedBigInteger(generateBigIntString(995));
+
+            UnsignedBigInteger diff = UnsignedBigInteger.subtract(first, second);
+            Assert.assertEquals(UnsignedBigInteger.add(second, diff), first);
+        }
+    }
+
+    @Test
+    void mulByIntTest() {
+        Assert.assertEquals("182739812922557052552551822717723802223228401708239182390", UnsignedBigInteger.mulByInt(a, 1000000001).toString());
+    }
+
+    @Test
+    void mulTest() {
+        String mul = "51738633122894703676225428408097288277879497015410025212588169383320332048601778920";
+        Assert.assertEquals(mul, UnsignedBigInteger.mul(a, b).toString());
+    }
 }
