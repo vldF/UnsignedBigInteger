@@ -63,6 +63,15 @@ public class UnsignedBigInteger {
         return digitCount; // even if value.size() more than Integer.MAX_VALUE, return Integer.MAX_VALUE. Methods below will be right
     }
 
+    private UnsignedBigInteger copy() {
+        try {
+            return (UnsignedBigInteger) this.clone();
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     public static UnsignedBigInteger add(UnsignedBigInteger a, UnsignedBigInteger b) {
         UnsignedBigInteger res = new UnsignedBigInteger();
 
@@ -82,6 +91,25 @@ public class UnsignedBigInteger {
 
         if (transfer != 0) {
             res.addDigit(transfer);
+        }
+        return res;
+    }
+
+    public static UnsignedBigInteger subtract(UnsignedBigInteger a, UnsignedBigInteger b) {
+        UnsignedBigInteger res = new UnsignedBigInteger();
+
+        Iterator<Integer> aIter = a.getIterable();
+        Iterator<Integer> bIter = b.getIterable();
+
+        int transfer = 0;
+        while (aIter.hasNext() || bIter.hasNext()) {
+            int newValue = 0;
+            if (aIter.hasNext()) newValue += aIter.next();
+            if (bIter.hasNext()) newValue -= bIter.next();
+            newValue += transfer;
+            transfer = newValue < 0 ? (int) Math.floor(newValue * 1.0 / base) : 0;
+            newValue = Math.floorMod(newValue, base);
+            res.addDigit(newValue);
         }
         return res;
     }

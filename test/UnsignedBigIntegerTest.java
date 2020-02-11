@@ -8,7 +8,9 @@ class UnsignedBigIntegerTest {
 
     private String numberA = "182739812739817239812734582904989219318239182390";
     private String numberB = "283127318273875823814818238284284828";
-    private String sum = "182739812740100367131008458728804037556523467218";
+
+    UnsignedBigInteger a = new UnsignedBigInteger(numberA);
+    UnsignedBigInteger b = new UnsignedBigInteger(numberB);
 
     private String generateBigIntString(int countDigits){
         StringBuilder number = new StringBuilder();
@@ -31,6 +33,8 @@ class UnsignedBigIntegerTest {
 
     @Test
     void addTest() {
+        String sum = "182739812740100367131008458728804037556523467218";
+
         UnsignedBigInteger a = new UnsignedBigInteger(numberA);
         UnsignedBigInteger b = new UnsignedBigInteger(numberB);
         UnsignedBigInteger bigRes = UnsignedBigInteger.add(a, b);
@@ -39,9 +43,6 @@ class UnsignedBigIntegerTest {
 
     @Test
     void compareTest() {
-        UnsignedBigInteger a = new UnsignedBigInteger(numberA);
-        UnsignedBigInteger b = new UnsignedBigInteger(numberB);
-
         Assert.assertTrue(UnsignedBigInteger.isAMoreThanB(a, b));
         Assert.assertTrue(UnsignedBigInteger.isALessThanB(b, a));
         Assert.assertTrue(UnsignedBigInteger.isAEqualsB(a, a));
@@ -49,6 +50,12 @@ class UnsignedBigIntegerTest {
         Assert.assertTrue(UnsignedBigInteger.isAMoreOrEqualsB(b, b));
 
         Assert.assertFalse(UnsignedBigInteger.isAMoreThanB(b, a));
+    }
+
+    @Test
+    void subtractTest() {
+        String subtract = "182739812739534112494460707081174401079954897562";
+        Assert.assertEquals(subtract, UnsignedBigInteger.subtract(a, b).toString());
     }
 
 }
