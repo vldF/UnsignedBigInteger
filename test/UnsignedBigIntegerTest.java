@@ -2,6 +2,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.Assert;
 
 import java.util.Random;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class UnsignedBigIntegerTest {
     private final Random rand = new Random();
@@ -32,6 +33,14 @@ class UnsignedBigIntegerTest {
     }
 
     @Test
+    void testNumberFromLongInit() {
+        for (int n = 0; n < 10; n++) {
+            UnsignedBigInteger num = new UnsignedBigInteger(n * 1000000L);
+            Assert.assertEquals(Long.toString((n * 1000000L)), num.toString());
+        }
+    }
+
+    @Test
     void addTest() {
         String sum = "182739812740100367131008458728804037556523467218";
 
@@ -48,8 +57,9 @@ class UnsignedBigIntegerTest {
         Assert.assertTrue(a.isEquals(a));
         Assert.assertTrue(a.isLessOrEquals(a));
         Assert.assertTrue(b.isLessOrEquals(b));
-
         Assert.assertFalse(b.isMoreThan(a));
+        UnsignedBigInteger oneMore = a.copy();
+        Assert.assertEquals(a, oneMore);
     }
 
     @Test
@@ -60,12 +70,16 @@ class UnsignedBigIntegerTest {
 
     @Test
     void addAndSubtractTest() {
-        for (int i = 0; i < 10000; i++) {
+        for (int i = 0; i < 100; i++) {
             UnsignedBigInteger first = new UnsignedBigInteger(generateBigIntString(1000));
-            UnsignedBigInteger second = new UnsignedBigInteger(generateBigIntString(995));
+            UnsignedBigInteger second = new UnsignedBigInteger(generateBigIntString(1000));
 
-            UnsignedBigInteger diff = first.subtract(second);
-            Assert.assertEquals(second.add(diff), first);
+            if (first.isLessThan(second)){
+                assertThrows(ArithmeticException.class, () -> first.subtract(second));
+            } else {
+                UnsignedBigInteger diff = first.subtract(second);
+                Assert.assertEquals(second.add(diff), first);
+            }
         }
     }
 
@@ -100,12 +114,40 @@ class UnsignedBigIntegerTest {
     }
 
     @Test
-    void mulAndDivTest() {
-        for (int i = 0; i < 10; i++){
+    void mulAndDivTest() throws Exception {
+        for (int i = 0; i < 100; i++){
             UnsignedBigInteger first = new UnsignedBigInteger(generateBigIntString(100));
-            UnsignedBigInteger second = new UnsignedBigInteger(generateBigIntString(100));
+            UnsignedBigInteger second = new UnsignedBigInteger(generateBigIntString(90));
             UnsignedBigInteger mul = first.mul(second);
-            Assert.assertEquals(second.toString(), mul.div(first).toString());
+            if (!second.toString().equals(mul.div(first).toString())) {
+                System.out.println(first);
+                System.out.println(second);
+                System.out.println(mul);
+                System.out.println(mul.div(first));
+                throw new Exception();
+            }
+        }
+    }
+
+    @Test
+    void checkZeroOnDiv() {
+        UnsignedBigInteger first = new UnsignedBigInteger("100000000000");
+        UnsignedBigInteger second = new UnsignedBigInteger("10000000001000000000");
+        UnsignedBigInteger div = first.div(second);
+        Assert.assertEquals("0", div.toString());
+
+        assertThrows(ArithmeticException.class, () -> new UnsignedBigInteger("100").div(new UnsignedBigInteger("0")));
+    }
+
+    @Test
+    void divModTest() {
+        for (int i = 0; i < 100; i++) {
+            UnsignedBigInteger num1 = new UnsignedBigInteger(generateBigIntString(80));
+            UnsignedBigInteger num2 = new UnsignedBigInteger(generateBigIntString(100));
+
+            UnsignedBigInteger[] divMod = num1.divMod(num2);
+            Assert.assertEquals(num1, divMod[0].mul(num2).add(divMod[1]));
+
         }
     }
 }

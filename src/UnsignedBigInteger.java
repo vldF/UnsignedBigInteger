@@ -8,6 +8,7 @@ import static java.lang.Integer.max;
 public class UnsignedBigInteger {
     private static final int base = 1_000_000_000; // max degree of 10, that int can describe
     private static final int digitsCount = 9; // max degree of 10, that int can describe
+    private static final UnsignedBigInteger zeroNumber = new UnsignedBigInteger("0");
     List<Integer> value;
 
     UnsignedBigInteger(String str) {
@@ -31,15 +32,15 @@ public class UnsignedBigInteger {
         this.value = value;
     }
 
-    //todo
-    UnsignedBigInteger(int value) {
-        this(Integer.toString(value));
-    }
+    UnsignedBigInteger(long num) {
+        value = new ArrayList<>();
+        while (num > 0) {
+            int digit = (int) (num % base);
+            num /= base;
+            value.add(digit);
+        }
 
-    enum equality {
-        LESS,
-        MORE,
-        EQUALS
+        if (value.size() == 0) value.add(0);
     }
 
     @Override
@@ -67,13 +68,8 @@ public class UnsignedBigInteger {
     }
 
     private void shift(int n) {
-        if (n > 0) {
-            for (int i = 0; i < n; i++)
-                value.add(0, 0);
-        }else {
-            for (int i = 0; i < -n; i++)
-                value.remove(0);
-        }
+        for (int i = 0; i < n; i++)
+            value.add(0, 0);
     }
 
     private int getDigitCount() {
@@ -89,15 +85,15 @@ public class UnsignedBigInteger {
             }
         }
         this.value = this.value.subList(0, firstNonZero + 1);
+        addZerosIfNeeded();
     }
 
-    //todo что, если n больше, чем надо?
     private UnsignedBigInteger getLast(int n) {
         if (n > value.size()) return this;
         return new UnsignedBigInteger(value.subList(max(0, value.size() - n), value.size()));
     }
 
-    private UnsignedBigInteger copy() {
+    public UnsignedBigInteger copy() {
         UnsignedBigInteger res = new UnsignedBigInteger();
         res.value.addAll(this.value);
         return res;
@@ -109,6 +105,10 @@ public class UnsignedBigInteger {
         UnsignedBigInteger res = a.subtract(bShifted);
         res.popZeros();
         return res;
+    }
+
+    private void addZerosIfNeeded() {
+        if (this.value.size() == 0) this.value.add(0);
     }
 
     /**
@@ -147,6 +147,7 @@ public class UnsignedBigInteger {
      * @return UnsignedBigInteger
      */
     public UnsignedBigInteger add(int other) {
+        if (other < 0) throw new ArithmeticException("other number should be unless than 0");
         UnsignedBigInteger res = new UnsignedBigInteger();
         Iterator<Integer> aIter = this.getIterable();
 
@@ -172,6 +173,8 @@ public class UnsignedBigInteger {
      * @return UnsignedBigInteger
      */
     public UnsignedBigInteger subtract(UnsignedBigInteger other) {
+        if (this.isLessThan(other)) throw new ArithmeticException("decreasing number should be less than subtracted number");
+
         UnsignedBigInteger res = new UnsignedBigInteger();
 
         Iterator<Integer> aIter = this.getIterable();
@@ -231,6 +234,7 @@ public class UnsignedBigInteger {
             res = res.add(newNum);
             shift++;
         }
+        res.popZeros();
         return res;
     }
 
@@ -250,16 +254,19 @@ public class UnsignedBigInteger {
             carry = (int) (cur % other);
         }
         res.popZeros();
+        res.addZerosIfNeeded();
         return res;
     }
 
     /**
-     * A.div(B) ~ A / B
+     * A.divMod(B) ~ [A / B, A % B]
      * adds a with b and returns result
      * @param other UnsignedBigInt
-     * @return UnsignedBigInteger
+     * @return UnsignedBigInteger[]; UnsignedBigInteger[0] is a result of division,
+     * UnsignedBigInteger[1] is a modulo result
      */
-    public UnsignedBigInteger div(UnsignedBigInteger other) {
+    public UnsignedBigInteger[] divMod(UnsignedBigInteger other) {
+        if (other.equals(zeroNumber)) throw new ArithmeticException("Zero division");
         UnsignedBigInteger res = new UnsignedBigInteger();
         UnsignedBigInteger dividend = this.copy();
         while (dividend.isMoreOrEquals(other)) {
@@ -291,11 +298,25 @@ public class UnsignedBigInteger {
                     break;
                 }
             }
-
             res.value.add(0, r);
             dividend = leftSubtract(dividend, other.mul(r));
         }
-        return res;
+        res.addZerosIfNeeded();
+        return new UnsignedBigInteger[] {res, dividend};
+    }
+
+    public UnsignedBigInteger div(UnsignedBigInteger other) {
+        return this.divMod(other)[0];
+    }
+
+    public UnsignedBigInteger mod(UnsignedBigInteger other) {
+        return this.divMod(other)[1];
+    }
+
+    enum equality {
+        LESS,
+        MORE,
+        EQUALS
     }
 
     private static equality CompareAAndB(UnsignedBigInteger a, UnsignedBigInteger b) {
@@ -341,7 +362,7 @@ public class UnsignedBigInteger {
 
     @Override
     public boolean equals(Object o) {
-        if (o.getClass() != UnsignedBigInteger.class) return false;
+        if (!(o instanceof UnsignedBigInteger)) return false;
         return this.isEquals((UnsignedBigInteger) o);
     }
 }
