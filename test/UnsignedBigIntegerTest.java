@@ -37,25 +37,25 @@ class UnsignedBigIntegerTest {
 
         UnsignedBigInteger a = new UnsignedBigInteger(numberA);
         UnsignedBigInteger b = new UnsignedBigInteger(numberB);
-        UnsignedBigInteger bigRes = UnsignedBigInteger.add(a, b);
+        UnsignedBigInteger bigRes = a.add(b);
         Assert.assertEquals(sum, bigRes.toString());
     }
 
     @Test
     void compareTest() {
-        Assert.assertTrue(UnsignedBigInteger.isAMoreThanB(a, b));
-        Assert.assertTrue(UnsignedBigInteger.isALessThanB(b, a));
-        Assert.assertTrue(UnsignedBigInteger.isAEqualsB(a, a));
-        Assert.assertTrue(UnsignedBigInteger.isALessOrEqualsB(a, a));
-        Assert.assertTrue(UnsignedBigInteger.isAMoreOrEqualsB(b, b));
+        Assert.assertTrue(a.isMoreThan(b));
+        Assert.assertTrue(b.isLessThan(a));
+        Assert.assertTrue(a.isEquals(a));
+        Assert.assertTrue(a.isLessOrEquals(a));
+        Assert.assertTrue(b.isLessOrEquals(b));
 
-        Assert.assertFalse(UnsignedBigInteger.isAMoreThanB(b, a));
+        Assert.assertFalse(b.isMoreThan(a));
     }
 
     @Test
     void subtractTest() {
         String subtract = "182739812739534112494460707081174401079954897562";
-        Assert.assertEquals(subtract, UnsignedBigInteger.subtract(a, b).toString());
+        Assert.assertEquals(subtract, a.subtract(b).toString());
     }
 
     @Test
@@ -64,39 +64,39 @@ class UnsignedBigIntegerTest {
             UnsignedBigInteger first = new UnsignedBigInteger(generateBigIntString(1000));
             UnsignedBigInteger second = new UnsignedBigInteger(generateBigIntString(995));
 
-            UnsignedBigInteger diff = UnsignedBigInteger.subtract(first, second);
-            Assert.assertEquals(UnsignedBigInteger.add(second, diff), first);
+            UnsignedBigInteger diff = first.subtract(second);
+            Assert.assertEquals(second.add(diff), first);
         }
     }
 
     @Test
     void mulByIntTest() {
-        Assert.assertEquals("182739812922557052552551822717723802223228401708239182390", UnsignedBigInteger.mulByInt(a, 1000000001).toString());
+        Assert.assertEquals("182739812922557052552551822717723802223228401708239182390", (a.mul(1000000001)).toString());
     }
 
     @Test
     void mulTest() {
         String mul = "51738633122894703676225428408097288277879497015410025212588169383320332048601778920";
-        Assert.assertEquals(mul, UnsignedBigInteger.mul(a, b).toString());
+        Assert.assertEquals(mul, a.mul(b).toString());
     }
 
     @Test
     void addIntTest() {
         UnsignedBigInteger first = new UnsignedBigInteger("900000000000000000");
-        Assert.assertEquals("900000002000000000", UnsignedBigInteger.addInt(first, 2000000000).toString());
+        Assert.assertEquals("900000002000000000", first.add(2000000000).toString());
     }
 
     @Test
     void divByIntTest() {
         UnsignedBigInteger first = new UnsignedBigInteger("17027176145819335214232514");
-        Assert.assertEquals("123123182828828182", UnsignedBigInteger.divByInt(first, 138293827).toString());
+        Assert.assertEquals("123123182828828182", first.div(138293827).toString());
     }
 
     @Test
     void divTest(){
         UnsignedBigInteger first = new UnsignedBigInteger("8110655784862507773201087515783930125888643533703330618528244");
         UnsignedBigInteger second = new UnsignedBigInteger("81989182931802938109238109238");
-        Assert.assertEquals("98923485938490189202131902839438", UnsignedBigInteger.div(first, second).toString());
+        Assert.assertEquals("98923485938490189202131902839438", first.div(second).toString());
     }
 
     @Test
@@ -104,15 +104,8 @@ class UnsignedBigIntegerTest {
         for (int i = 0; i < 10; i++){
             UnsignedBigInteger first = new UnsignedBigInteger(generateBigIntString(100));
             UnsignedBigInteger second = new UnsignedBigInteger(generateBigIntString(100));
-            UnsignedBigInteger mul = UnsignedBigInteger.mul(first, second);
-            Assert.assertEquals(second.toString(), UnsignedBigInteger.div(mul, first).toString());
+            UnsignedBigInteger mul = first.mul(second);
+            Assert.assertEquals(second.toString(), mul.div(first).toString());
         }
-    }
-
-    @Test
-    void leftSubtractTest() {
-        UnsignedBigInteger first = new UnsignedBigInteger("300350140004");
-        UnsignedBigInteger second = new UnsignedBigInteger("100000001");
-        System.out.println(UnsignedBigInteger.leftSubtract(first, second));
     }
 }

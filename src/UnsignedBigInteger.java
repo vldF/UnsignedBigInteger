@@ -8,7 +8,6 @@ import static java.lang.Integer.max;
 public class UnsignedBigInteger {
     private static final int base = 1_000_000_000; // max degree of 10, that int can describe
     private static final int digitsCount = 9; // max degree of 10, that int can describe
-    private int digitCount = -1;
     List<Integer> value;
 
     UnsignedBigInteger(String str) {
@@ -78,7 +77,7 @@ public class UnsignedBigInteger {
     }
 
     private int getDigitCount() {
-        return digitCount = value.size(); // even if value.size() more than Integer.MAX_VALUE, return Integer.MAX_VALUE. Methods below will be right
+        return value.size(); // even if value.size() more than Integer.MAX_VALUE, return Integer.MAX_VALUE. Methods below will be right
     }
 
     private void popZeros() {
@@ -98,29 +97,31 @@ public class UnsignedBigInteger {
         return new UnsignedBigInteger(value.subList(max(0, value.size() - n), value.size()));
     }
 
-    private int getLastInt() {
-        return value.get(0);
-    }
-
     private UnsignedBigInteger copy() {
         UnsignedBigInteger res = new UnsignedBigInteger();
         res.value.addAll(this.value);
         return res;
     }
 
-    public static UnsignedBigInteger leftSubtract(UnsignedBigInteger a, UnsignedBigInteger b) {
+    private static UnsignedBigInteger leftSubtract(UnsignedBigInteger a, UnsignedBigInteger b) {
         UnsignedBigInteger bShifted = b.copy();
         bShifted.shift(a.getDigitCount() - b.getDigitCount());
-        UnsignedBigInteger res = UnsignedBigInteger.subtract(a, bShifted);
+        UnsignedBigInteger res = a.subtract(bShifted);
         res.popZeros();
         return res;
     }
 
-    public static UnsignedBigInteger add(UnsignedBigInteger a, UnsignedBigInteger b) {
+    /**
+     * A.add(B) ~ A + B
+     * adds a with b and returns result
+     * @param other UnsignedBigInteger
+     * @return UnsignedBigInteger
+     */
+    public UnsignedBigInteger add(UnsignedBigInteger other) {
         UnsignedBigInteger res = new UnsignedBigInteger();
 
-        Iterator<Integer> aIter = a.getIterable();
-        Iterator<Integer> bIter = b.getIterable();
+        Iterator<Integer> aIter = this.getIterable();
+        Iterator<Integer> bIter = other.getIterable();
 
         int transfer = 0;
         while (aIter.hasNext() || bIter.hasNext()) {
@@ -139,11 +140,17 @@ public class UnsignedBigInteger {
         return res;
     }
 
-    public static UnsignedBigInteger addInt(UnsignedBigInteger a, int b) {
+    /**
+     * A.add(B) ~ A + B
+     * adds a with b and returns result
+     * @param other int
+     * @return UnsignedBigInteger
+     */
+    public UnsignedBigInteger add(int other) {
         UnsignedBigInteger res = new UnsignedBigInteger();
-        Iterator<Integer> aIter = a.getIterable();
+        Iterator<Integer> aIter = this.getIterable();
 
-        int transfer = b;
+        int transfer = other;
         while (aIter.hasNext()) {
             int val = aIter.next();
             val += transfer;
@@ -158,11 +165,17 @@ public class UnsignedBigInteger {
         return res;
     }
 
-    public static UnsignedBigInteger subtract(UnsignedBigInteger a, UnsignedBigInteger b) {
+    /**
+     * A.subtract(B) ~ A - B
+     * adds a with b and returns result
+     * @param other UnsignedBigInteger
+     * @return UnsignedBigInteger
+     */
+    public UnsignedBigInteger subtract(UnsignedBigInteger other) {
         UnsignedBigInteger res = new UnsignedBigInteger();
 
-        Iterator<Integer> aIter = a.getIterable();
-        Iterator<Integer> bIter = b.getIterable();
+        Iterator<Integer> aIter = this.getIterable();
+        Iterator<Integer> bIter = other.getIterable();
 
         int transfer = 0;
         while (aIter.hasNext() || bIter.hasNext()) {
@@ -177,13 +190,19 @@ public class UnsignedBigInteger {
         return res;
     }
 
-    public static UnsignedBigInteger mulByInt(UnsignedBigInteger a, long b) {
+    /**
+     * A.mul(B) ~ A * B
+     * adds a with b and returns result
+     * @param other long
+     * @return UnsignedBigInteger
+     */
+    public UnsignedBigInteger mul(long other) {
         UnsignedBigInteger res = new UnsignedBigInteger();
-        Iterator<Integer> aIter = a.getIterable();
+        Iterator<Integer> aIter = this.getIterable();
 
         int transfer = 0;
         while (aIter.hasNext()) {
-            long newVal = aIter.next() * b + transfer;
+            long newVal = aIter.next() * other + transfer;
             transfer = (int) (newVal / base);
             res.addDigit((int) (newVal % base));
         }
@@ -195,44 +214,63 @@ public class UnsignedBigInteger {
         return res;
     }
 
-    public static UnsignedBigInteger mul(UnsignedBigInteger a, UnsignedBigInteger b) {
+    /**
+     * A.mul(B) ~ A * B
+     * adds a with b and returns result
+     * @param other UnsignedBigInteger
+     * @return UnsignedBigInteger
+     */
+    public UnsignedBigInteger mul(UnsignedBigInteger other) {
         UnsignedBigInteger res = new UnsignedBigInteger();
-        Iterator<Integer> aIter = a.getIterable();
+        Iterator<Integer> aIter = this.getIterable();
 
         int shift = 0;
         while (aIter.hasNext()) {
-            UnsignedBigInteger newNum = mulByInt(b, aIter.next());
+            UnsignedBigInteger newNum = other.mul(aIter.next());
             newNum.shift(shift);
-            res = UnsignedBigInteger.add(res, newNum);
+            res = res.add(newNum);
             shift++;
         }
         return res;
     }
 
-    public static UnsignedBigInteger divByInt(UnsignedBigInteger a, int b) {
+    /**
+     * A.div(B) ~ A / B
+     * adds a with b and returns result
+     * @param other int
+     * @return UnsignedBigInteger
+     */
+    public UnsignedBigInteger div(int other) {
         UnsignedBigInteger res = new UnsignedBigInteger();
-        res.value = a.value;
+        res.value = this.value;
         int carry = 0;
-        for (int i = a.value.size() - 1; i >= 0; i--) {
-            long cur = a.value.get(i) + (long) carry * base;
-            a.value.set(i, (int) (cur / b));
-            carry = (int) (cur % b);
+        for (int i = this.value.size() - 1; i >= 0; i--) {
+            long cur = this.value.get(i) + (long) carry * base;
+            this.value.set(i, (int) (cur / other));
+            carry = (int) (cur % other);
         }
         res.popZeros();
         return res;
     }
 
-    public static UnsignedBigInteger div(UnsignedBigInteger a, UnsignedBigInteger b) {
+    /**
+     * A.div(B) ~ A / B
+     * adds a with b and returns result
+     * @param other UnsignedBigInt
+     * @return UnsignedBigInteger
+     */
+    public UnsignedBigInteger div(UnsignedBigInteger other) {
         UnsignedBigInteger res = new UnsignedBigInteger();
-        while (isAMoreOrEqualsB(a, b)) {
-            UnsignedBigInteger a1 = a.getLast(b.getDigitCount());
-            UnsignedBigInteger divisor = b.copy();
-            if (isALessThanB(a1, b)) {
-                a1 = a.getLast(b.getDigitCount() + 1);
+        UnsignedBigInteger dividend = this.copy();
+        while (dividend.isMoreOrEquals(other)) {
+            UnsignedBigInteger a1 = dividend.getLast(other.getDigitCount());
+            UnsignedBigInteger divisor = other.copy();
+            if (a1.isLessThan(other)) {
+                a1 = dividend.getLast(other.getDigitCount() + 1);
             }
 
             int r = 1;
-            while (isALessOrEqualsB(mulByInt(divisor, r), a1)) {
+            while (divisor.mul(r).isLessOrEquals(a1)) {
                 r *= 2;
             }
             int lower = r / 2;
@@ -240,9 +278,9 @@ public class UnsignedBigInteger {
 
             while (true) {
                 r = lower / 2 + upper / 2;
-                if (isALessThanB(mulByInt(divisor, r), a1)) {
+                if (divisor.mul(r).isLessThan(a1)) {
                     lower = r;
-                } else if (isAMoreThanB(mulByInt(divisor, r), a1)) {
+                } else if (divisor.mul(r).isMoreThan(a1)) {
                     upper = r;
                 } else {
                     break;
@@ -255,7 +293,7 @@ public class UnsignedBigInteger {
             }
 
             res.value.add(0, r);
-            a = leftSubtract(a, mulByInt(b, r));
+            dividend = leftSubtract(dividend, other.mul(r));
         }
         return res;
     }
@@ -276,34 +314,34 @@ public class UnsignedBigInteger {
         return equality.EQUALS;
     }
 
-    public static boolean isAMoreThanB(UnsignedBigInteger a, UnsignedBigInteger b) {
-        equality res = CompareAAndB(a, b);
+    public boolean isMoreThan(UnsignedBigInteger other) {
+        equality res = CompareAAndB(this, other);
         return res == equality.MORE;
     }
 
-    public static boolean isALessThanB(UnsignedBigInteger a, UnsignedBigInteger b) {
-        equality res = CompareAAndB(a, b);
+    public boolean isLessThan(UnsignedBigInteger other) {
+        equality res = CompareAAndB(this, other);
         return res == equality.LESS;
     }
 
-    public static boolean isAMoreOrEqualsB(UnsignedBigInteger a, UnsignedBigInteger b) {
-        equality res = CompareAAndB(a, b);
+    public boolean isMoreOrEquals(UnsignedBigInteger other) {
+        equality res = CompareAAndB(this, other);
         return res == equality.MORE || res == equality.EQUALS;
     }
 
-    public static boolean isALessOrEqualsB(UnsignedBigInteger a, UnsignedBigInteger b) {
-        equality res = CompareAAndB(a, b);
+    public boolean isLessOrEquals(UnsignedBigInteger other) {
+        equality res = CompareAAndB(this, other);
         return res == equality.LESS || res == equality.EQUALS;
     }
 
-    public static boolean isAEqualsB(UnsignedBigInteger a, UnsignedBigInteger b) {
-        equality res = CompareAAndB(a, b);
+    public boolean isEquals(UnsignedBigInteger other) {
+        equality res = CompareAAndB(this, other);
         return res == equality.EQUALS;
     }
 
     @Override
     public boolean equals(Object o) {
         if (o.getClass() != UnsignedBigInteger.class) return false;
-        return isAEqualsB(this, (UnsignedBigInteger) o);
+        return this.isEquals((UnsignedBigInteger) o);
     }
 }
