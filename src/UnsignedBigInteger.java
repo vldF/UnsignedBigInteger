@@ -9,7 +9,7 @@ public class UnsignedBigInteger {
     private static final int base = 1_000_000_000; // max degree of 10, that int can describe
     private static final int digitsCount = 9; // max degree of 10, that int can describe
     private static final UnsignedBigInteger zeroNumber = new UnsignedBigInteger("0");
-    List<Integer> value;
+    private List<Integer> value;
 
     UnsignedBigInteger(String str) {
         StringBuilder numberStringBuilder = new StringBuilder(str);
