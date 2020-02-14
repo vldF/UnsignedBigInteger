@@ -2,7 +2,7 @@
 UnsignedBigInteger class for SPbSTU
 This class implements long ariphmetic with integer non-negative numbers.
 # Examples
-1. Creation
+1. Creating
     ```
     UnsignedBigInteger a = new UnsignedBigInteger("123");
     UnsignedBigInteger b = new UnsignedBigInteger(100L); may throw ArithmeticException when number in bracets less than zero
