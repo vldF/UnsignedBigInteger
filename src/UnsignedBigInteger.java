@@ -33,6 +33,7 @@ public class UnsignedBigInteger {
     }
 
     UnsignedBigInteger(long num) {
+        if (num < 0) throw new ArithmeticException("num must be non-negative");
         value = new ArrayList<>();
         while (num > 0) {
             int digit = (int) (num % base);
