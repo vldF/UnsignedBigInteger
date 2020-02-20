@@ -12,7 +12,7 @@ This class implements long ariphmetic with integer non-negative numbers.
     a.div(b); // division, may throw ArithmeticException when b == 0
     a.mul(b); // multiplication
     a.add(b); // add
-    a.subtrack(b); // subtracktion (minus), may throw ArithmeticException when b > a
+    a.subtrack(b); // subtraction (minus), may throw ArithmeticException when b > a
     ```
 3. Comparation
     ```
