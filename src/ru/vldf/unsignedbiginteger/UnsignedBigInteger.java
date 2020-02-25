@@ -4,12 +4,16 @@ import java.util.*;
 
 import static java.lang.Integer.max;
 
-public class UnsignedBigInteger {
+public class UnsignedBigInteger implements Comparable<UnsignedBigInteger>{
     private static final int base = 1_000_000_000; // max degree of 10, that int can describe
     private static final int digitsCount = 9; // max degree of 10, that int can describe
     private static final UnsignedBigInteger zeroNumber = new UnsignedBigInteger("0");
     private List<Integer> value;
 
+    /**
+     * Creates a UnsignedBigInteger from string
+     * @param str String
+     */
     public UnsignedBigInteger(String str) {
         StringBuilder numberStringBuilder = new StringBuilder(str);
         value = new ArrayList<>();
@@ -31,6 +35,10 @@ public class UnsignedBigInteger {
         this.value = value;
     }
 
+    /**
+     * Creates a UnsignedBigInteger from long
+     * @param num long
+     */
     public UnsignedBigInteger(long num) {
         value = new ArrayList<>();
         while (num > 0) {
@@ -198,7 +206,7 @@ public class UnsignedBigInteger {
      * @param other long
      * @return UnsignedBigInteger
      */
-    public UnsignedBigInteger mul(long other) {
+    public UnsignedBigInteger times(long other) {
         UnsignedBigInteger res = new UnsignedBigInteger();
         Iterator<Integer> aIter = this.getIterable();
 
@@ -222,13 +230,13 @@ public class UnsignedBigInteger {
      * @param other UnsignedBigInteger
      * @return UnsignedBigInteger
      */
-    public UnsignedBigInteger mul(UnsignedBigInteger other) {
+    public UnsignedBigInteger times(UnsignedBigInteger other) {
         UnsignedBigInteger res = new UnsignedBigInteger();
         Iterator<Integer> aIter = this.getIterable();
 
         int shift = 0;
         while (aIter.hasNext()) {
-            UnsignedBigInteger newNum = other.mul(aIter.next());
+            UnsignedBigInteger newNum = other.times(aIter.next());
             newNum.shift(shift);
             res = res.add(newNum);
             shift++;
@@ -264,7 +272,7 @@ public class UnsignedBigInteger {
      * @return UnsignedBigInteger[]; UnsignedBigInteger[0] is a result of division,
      * UnsignedBigInteger[1] is a modulo result
      */
-    public UnsignedBigInteger[] divMod(UnsignedBigInteger other) {
+    public DivModResult divMod(UnsignedBigInteger other) {
         if (other.equals(zeroNumber)) throw new ArithmeticException("Zero division");
         UnsignedBigInteger res = new UnsignedBigInteger();
         UnsignedBigInteger dividend = this.copy();
@@ -276,7 +284,7 @@ public class UnsignedBigInteger {
             }
 
             int r = 1;
-            while (divisor.mul(r).isLessOrEquals(a1)) {
+            while (divisor.times(r).isLessOrEquals(a1)) {
                 r *= 2;
             }
             int lower = r / 2;
@@ -284,9 +292,9 @@ public class UnsignedBigInteger {
 
             while (true) {
                 r = lower / 2 + upper / 2;
-                if (divisor.mul(r).isLessThan(a1)) {
+                if (divisor.times(r).isLessThan(a1)) {
                     lower = r;
-                } else if (divisor.mul(r).isMoreThan(a1)) {
+                } else if (divisor.times(r).isMoreThan(a1)) {
                     upper = r;
                 } else {
                     break;
@@ -298,65 +306,80 @@ public class UnsignedBigInteger {
                 }
             }
             res.value.add(0, r);
-            dividend = leftSubtract(dividend, other.mul(r));
+            dividend = leftSubtract(dividend, other.times(r));
         }
         res.addZerosIfNeeded();
-        return new UnsignedBigInteger[] {res, dividend};
+        return new DivModResult(res, dividend);
     }
 
     public UnsignedBigInteger div(UnsignedBigInteger other) {
-        return this.divMod(other)[0];
+        return this.divMod(other).getDiv();
     }
 
     public UnsignedBigInteger mod(UnsignedBigInteger other) {
-        return this.divMod(other)[1];
+        return this.divMod(other).getMod();
     }
 
-    enum equality {
-        LESS,
-        MORE,
-        EQUALS
-    }
+    /**
+     * Comparable method.
+     * @param other UnsignedBigInteger
+     * @return 0 if equals other, -1 if less than other, 1 if more than other
+     */
+    @Override
+    public int compareTo(UnsignedBigInteger other) {
+        if (this.getDigitCount() > other.getDigitCount()) return 1;
+        else if (this.getDigitCount() < other.getDigitCount()) return -1;
 
-    private static equality CompareAAndB(UnsignedBigInteger a, UnsignedBigInteger b) {
-        if (a.getDigitCount() > b.getDigitCount()) return equality.MORE;
-        else if (a.getDigitCount() < b.getDigitCount()) return equality.LESS;
-
-        ListIterator<Integer> aIter = a.getBackwardIterable();
-        ListIterator<Integer> bIter = b.getBackwardIterable();
+        ListIterator<Integer> aIter = this.getBackwardIterable();
+        ListIterator<Integer> bIter = other.getBackwardIterable();
 
         while (aIter.hasPrevious()) {
             int digA = aIter.previous();
             int digB = bIter.previous();
-            if (digA > digB) return equality.MORE;
-            else if (digA < digB) return equality.LESS;
+            if (digA > digB) return 1;
+            else if (digA < digB) return -1;
         }
-        return equality.EQUALS;
+        return 0;
     }
 
+    /**
+     * @param other UnsignedBigInteger
+     * @return true if this more than other, else false
+     */
     public boolean isMoreThan(UnsignedBigInteger other) {
-        equality res = CompareAAndB(this, other);
-        return res == equality.MORE;
+        return this.compareTo(other) > 0;
     }
 
+    /**
+     * @param other UnsignedBigInteger
+     * @return true if this less than other, else false
+     */
     public boolean isLessThan(UnsignedBigInteger other) {
-        equality res = CompareAAndB(this, other);
-        return res == equality.LESS;
+        return this.compareTo(other) < 0;
     }
 
+    /**
+     * @param other UnsignedBigInteger
+     * @return true if this more or equals than other, else false
+     */
     public boolean isMoreOrEquals(UnsignedBigInteger other) {
-        equality res = CompareAAndB(this, other);
-        return res == equality.MORE || res == equality.EQUALS;
+        return this.compareTo(other) >= 0;
     }
 
+    /**
+     * @param other UnsignedBigInteger
+     * @return true if this less or equals than other, else false
+     */
     public boolean isLessOrEquals(UnsignedBigInteger other) {
-        equality res = CompareAAndB(this, other);
-        return res == equality.LESS || res == equality.EQUALS;
+        return this.compareTo(other) <= 0;
     }
 
+    /**
+     * @param other UnsignedBigInteger
+     * @return true if this equals other, else false
+     */
     public boolean isEquals(UnsignedBigInteger other) {
-        equality res = CompareAAndB(this, other);
-        return res == equality.EQUALS;
+        return this.compareTo(other) == 0;
     }
 
     @Override

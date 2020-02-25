@@ -1,5 +1,6 @@
 import org.junit.jupiter.api.Test;
 import org.junit.Assert;
+import ru.vldf.unsignedbiginteger.DivModResult;
 import ru.vldf.unsignedbiginteger.UnsignedBigInteger;
 
 import java.util.Random;
@@ -86,13 +87,13 @@ class UnsignedBigIntegerTest {
 
     @Test
     void mulByIntTest() {
-        Assert.assertEquals("182739812922557052552551822717723802223228401708239182390", (a.mul(1000000001)).toString());
+        Assert.assertEquals("182739812922557052552551822717723802223228401708239182390", (a.times(1000000001)).toString());
     }
 
     @Test
     void mulTest() {
         String mul = "51738633122894703676225428408097288277879497015410025212588169383320332048601778920";
-        Assert.assertEquals(mul, a.mul(b).toString());
+        Assert.assertEquals(mul, a.times(b).toString());
     }
 
     @Test
@@ -119,7 +120,7 @@ class UnsignedBigIntegerTest {
         for (int i = 0; i < 100; i++){
             UnsignedBigInteger first = new UnsignedBigInteger(generateBigIntString(100));
             UnsignedBigInteger second = new UnsignedBigInteger(generateBigIntString(90));
-            UnsignedBigInteger mul = first.mul(second);
+            UnsignedBigInteger mul = first.times(second);
             if (!second.toString().equals(mul.div(first).toString())) {
                 System.out.println(first);
                 System.out.println(second);
@@ -146,9 +147,8 @@ class UnsignedBigIntegerTest {
             UnsignedBigInteger num1 = new UnsignedBigInteger(generateBigIntString(80));
             UnsignedBigInteger num2 = new UnsignedBigInteger(generateBigIntString(100));
 
-            UnsignedBigInteger[] divMod = num1.divMod(num2);
-            Assert.assertEquals(num1, divMod[0].mul(num2).add(divMod[1]));
-
+            DivModResult divMod = num1.divMod(num2);
+            Assert.assertEquals(num1, divMod.getDiv().times(num2).add(divMod.getMod()));
         }
     }
 }
