@@ -1,7 +1,6 @@
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
+package ru.vldf.unsignedbiginteger;
+
+import java.util.*;
 
 import static java.lang.Integer.max;
 
@@ -11,7 +10,7 @@ public class UnsignedBigInteger {
     private static final UnsignedBigInteger zeroNumber = new UnsignedBigInteger("0");
     private List<Integer> value;
 
-    UnsignedBigInteger(String str) {
+    public UnsignedBigInteger(String str) {
         StringBuilder numberStringBuilder = new StringBuilder(str);
         value = new ArrayList<>();
 
@@ -32,8 +31,7 @@ public class UnsignedBigInteger {
         this.value = value;
     }
 
-    UnsignedBigInteger(long num) {
-        if (num < 0) throw new ArithmeticException("num must be non-negative");
+    public UnsignedBigInteger(long num) {
         value = new ArrayList<>();
         while (num > 0) {
             int digit = (int) (num % base);
@@ -365,5 +363,10 @@ public class UnsignedBigInteger {
     public boolean equals(Object o) {
         if (!(o instanceof UnsignedBigInteger)) return false;
         return this.isEquals((UnsignedBigInteger) o);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(value);
     }
 }

@@ -1,5 +1,6 @@
 import org.junit.jupiter.api.Test;
 import org.junit.Assert;
+import ru.vldf.unsignedbiginteger.UnsignedBigInteger;
 
 import java.util.Random;
 import static org.junit.jupiter.api.Assertions.assertThrows;
