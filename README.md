@@ -1,11 +1,11 @@
-# UnsignedBigInteger
-UnsignedBigInteger class for SPbSTU
+# ru.vldf.unsignedbiginteger.UnsignedBigInteger
+ru.vldf.unsignedbiginteger.UnsignedBigInteger class for SPbSTU
 This class implements long ariphmetic with integer non-negative numbers.
 # Examples
 1. Creating
     ```
-    UnsignedBigInteger a = new UnsignedBigInteger("123");
-    UnsignedBigInteger b = new UnsignedBigInteger(100L); may throw ArithmeticException when number in bracets less than zero
+    ru.vldf.unsignedbiginteger.UnsignedBigInteger a = new ru.vldf.unsignedbiginteger.UnsignedBigInteger("123");
+    ru.vldf.unsignedbiginteger.UnsignedBigInteger b = new ru.vldf.unsignedbiginteger.UnsignedBigInteger(100L); may throw ArithmeticException when number in bracets less than zero
     ```
 2. Operations
     ```

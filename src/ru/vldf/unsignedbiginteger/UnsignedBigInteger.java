@@ -1,3 +1,5 @@
+package ru.vldf.unsignedbiginteger;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -11,7 +13,7 @@ public class UnsignedBigInteger {
     private static final UnsignedBigInteger zeroNumber = new UnsignedBigInteger("0");
     private List<Integer> value;
 
-    UnsignedBigInteger(String str) {
+    public UnsignedBigInteger(String str) {
         StringBuilder numberStringBuilder = new StringBuilder(str);
         value = new ArrayList<>();
 
@@ -32,7 +34,7 @@ public class UnsignedBigInteger {
         this.value = value;
     }
 
-    UnsignedBigInteger(long num) {
+    public UnsignedBigInteger(long num) {
         value = new ArrayList<>();
         while (num > 0) {
             int digit = (int) (num % base);
@@ -114,8 +116,8 @@ public class UnsignedBigInteger {
     /**
      * A.add(B) ~ A + B
      * adds a with b and returns result
-     * @param other UnsignedBigInteger
-     * @return UnsignedBigInteger
+     * @param other ru.vldf.unsignedbiginteger.UnsignedBigInteger
+     * @return ru.vldf.unsignedbiginteger.UnsignedBigInteger
      */
     public UnsignedBigInteger add(UnsignedBigInteger other) {
         UnsignedBigInteger res = new UnsignedBigInteger();
@@ -144,7 +146,7 @@ public class UnsignedBigInteger {
      * A.add(B) ~ A + B
      * adds a with b and returns result
      * @param other int
-     * @return UnsignedBigInteger
+     * @return ru.vldf.unsignedbiginteger.UnsignedBigInteger
      */
     public UnsignedBigInteger add(int other) {
         if (other < 0) throw new ArithmeticException("other number should be unless than 0");
@@ -169,8 +171,8 @@ public class UnsignedBigInteger {
     /**
      * A.subtract(B) ~ A - B
      * adds a with b and returns result
-     * @param other UnsignedBigInteger
-     * @return UnsignedBigInteger
+     * @param other ru.vldf.unsignedbiginteger.UnsignedBigInteger
+     * @return ru.vldf.unsignedbiginteger.UnsignedBigInteger
      */
     public UnsignedBigInteger subtract(UnsignedBigInteger other) {
         if (this.isLessThan(other)) throw new ArithmeticException("decreasing number should be less than subtracted number");
@@ -197,7 +199,7 @@ public class UnsignedBigInteger {
      * A.mul(B) ~ A * B
      * adds a with b and returns result
      * @param other long
-     * @return UnsignedBigInteger
+     * @return ru.vldf.unsignedbiginteger.UnsignedBigInteger
      */
     public UnsignedBigInteger mul(long other) {
         UnsignedBigInteger res = new UnsignedBigInteger();
@@ -220,8 +222,8 @@ public class UnsignedBigInteger {
     /**
      * A.mul(B) ~ A * B
      * adds a with b and returns result
-     * @param other UnsignedBigInteger
-     * @return UnsignedBigInteger
+     * @param other ru.vldf.unsignedbiginteger.UnsignedBigInteger
+     * @return ru.vldf.unsignedbiginteger.UnsignedBigInteger
      */
     public UnsignedBigInteger mul(UnsignedBigInteger other) {
         UnsignedBigInteger res = new UnsignedBigInteger();
@@ -242,7 +244,7 @@ public class UnsignedBigInteger {
      * A.div(B) ~ A / B
      * adds a with b and returns result
      * @param other int
-     * @return UnsignedBigInteger
+     * @return ru.vldf.unsignedbiginteger.UnsignedBigInteger
      */
     public UnsignedBigInteger div(int other) {
         UnsignedBigInteger res = new UnsignedBigInteger();
@@ -262,8 +264,8 @@ public class UnsignedBigInteger {
      * A.divMod(B) ~ [A / B, A % B]
      * adds a with b and returns result
      * @param other UnsignedBigInt
-     * @return UnsignedBigInteger[]; UnsignedBigInteger[0] is a result of division,
-     * UnsignedBigInteger[1] is a modulo result
+     * @return ru.vldf.unsignedbiginteger.UnsignedBigInteger[]; ru.vldf.unsignedbiginteger.UnsignedBigInteger[0] is a result of division,
+     * ru.vldf.unsignedbiginteger.UnsignedBigInteger[1] is a modulo result
      */
     public UnsignedBigInteger[] divMod(UnsignedBigInteger other) {
         if (other.equals(zeroNumber)) throw new ArithmeticException("Zero division");
