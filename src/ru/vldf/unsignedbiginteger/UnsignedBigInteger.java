@@ -201,7 +201,7 @@ public class UnsignedBigInteger implements Comparable<UnsignedBigInteger>{
     }
 
     /**
-     * A.mul(B) ~ A * B
+     * A.times(B) ~ A * B
      * adds a with b and returns result
      * @param other long
      * @return UnsignedBigInteger
@@ -225,7 +225,7 @@ public class UnsignedBigInteger implements Comparable<UnsignedBigInteger>{
     }
 
     /**
-     * A.mul(B) ~ A * B
+     * A.times(B) ~ A * B
      * adds a with b and returns result
      * @param other UnsignedBigInteger
      * @return UnsignedBigInteger
