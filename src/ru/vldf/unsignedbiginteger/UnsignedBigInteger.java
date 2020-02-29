@@ -207,10 +207,13 @@ public class UnsignedBigInteger implements Comparable<UnsignedBigInteger>, Clone
     /**
      * A.times(B) ~ A * B
      * adds a with b and returns result
-     * @param other long
+     * @param other long (must be less or equals than Integer.MAX_VALUE)
      * @return UnsignedBigInteger
      */
     public UnsignedBigInteger times(long other) {
+        if (other > Integer.MAX_VALUE) {
+            throw new ArithmeticException("Other value must be less or equals than Integer.MAX_VALUE");
+        }
         UnsignedBigInteger res = new UnsignedBigInteger();
         Iterator<Integer> aIter = this.getIterable();
 

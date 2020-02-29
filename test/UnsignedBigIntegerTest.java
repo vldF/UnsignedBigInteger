@@ -11,8 +11,8 @@ class UnsignedBigIntegerTest {
     private String numberA = "182739812739817239812734582904989219318239182390";
     private String numberB = "283127318273875823814818238284284828";
 
-    UnsignedBigInteger a = new UnsignedBigInteger(numberA);
-    UnsignedBigInteger b = new UnsignedBigInteger(numberB);
+    private UnsignedBigInteger a = new UnsignedBigInteger(numberA);
+    private UnsignedBigInteger b = new UnsignedBigInteger(numberB);
 
     private String generateBigIntString(int countDigits){
         StringBuilder number = new StringBuilder();
@@ -22,6 +22,13 @@ class UnsignedBigIntegerTest {
             number.append(digit);
         }
         return number.toString();
+    }
+
+    private boolean isNumberCorrect(UnsignedBigInteger num) {
+        for (char c : num.toString().toCharArray()) {
+            if (!Character.isDigit(c)) return false;
+        }
+        return true;
     }
 
     @Test
@@ -86,13 +93,29 @@ class UnsignedBigIntegerTest {
 
     @Test
     void mulByIntTest() {
-        Assert.assertEquals("182739812922557052552551822717723802223228401708239182390", (a.times(1000000001)).toString());
+        Assert.assertEquals("392430759907030547781124647406354962337045236214390509347175376330", (a.times(Integer.MAX_VALUE)).toString());
     }
 
     @Test
     void mulTest() {
         String mul = "51738633122894703676225428408097288277879497015410025212588169383320332048601778920";
         Assert.assertEquals(mul, a.times(b).toString());
+        Assert.assertEquals(
+                "392430759514599788266524859139830103197215133017175376330",
+                (a.times(new UnsignedBigInteger("2147483647"))).toString()
+        );
+        Assert.assertEquals(
+                "3924307595538428642179848379664825891111981433368968896317175376330",
+                (a.times(new UnsignedBigInteger("21474836472147483647"))).toString()
+        );
+        Assert.assertEquals(
+                "39243075955384286422190914556162858699386339192829519066368968896317175376330",
+                (a.times(new UnsignedBigInteger("214748364721474836472147483647"))).toString()
+        );
+
+        UnsignedBigInteger c = new UnsignedBigInteger("9".repeat(100));
+        Assert.assertTrue(isNumberCorrect(c.times(Integer.MAX_VALUE)));
+        assertThrows(ArithmeticException.class, () -> isNumberCorrect(c.times((long) Integer.MAX_VALUE + 1)));
     }
 
     @Test
@@ -115,7 +138,7 @@ class UnsignedBigIntegerTest {
     }
 
     @Test
-    void mulAndDivTest() throws Exception {
+    void mulAndDivTest() {
         for (int i = 0; i < 100; i++){
             UnsignedBigInteger first = new UnsignedBigInteger(generateBigIntString(100));
             UnsignedBigInteger second = new UnsignedBigInteger(generateBigIntString(90));
