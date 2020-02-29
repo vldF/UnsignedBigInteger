@@ -93,7 +93,7 @@ class UnsignedBigIntegerTest {
 
     @Test
     void mulByIntTest() {
-        Assert.assertEquals("392430759907030547781124647406354962337045236214390509347175376330", (a.times(Integer.MAX_VALUE)).toString());
+        Assert.assertEquals("392430759514599788266524859139830103197215133017175376330", (a.times(Integer.MAX_VALUE)).toString());
     }
 
     @Test

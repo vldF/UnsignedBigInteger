@@ -110,6 +110,14 @@ public class UnsignedBigInteger implements Comparable<UnsignedBigInteger>, Clone
         }
     }
 
+    /**
+     * left subtract is subtract, where numbers increase from start to end (from left to right)
+     * 12345678 leftSubtract 123 = 45678
+     * 12345678 leftSubtract 11  = 1345678
+     * @param a UnsignedBigInteger
+     * @param b UnsignedBigInteger
+     * @return UnsignedBigInteger
+     */
     private static UnsignedBigInteger leftSubtract(UnsignedBigInteger a, UnsignedBigInteger b) {
         UnsignedBigInteger bShifted = b.clone();
         bShifted.shift(a.getDigitCount() - b.getDigitCount());
@@ -179,7 +187,7 @@ public class UnsignedBigInteger implements Comparable<UnsignedBigInteger>, Clone
 
     /**
      * A.subtract(B) ~ A - B
-     * adds a with b and returns result
+     * subtracts a with b and returns result
      * @param other UnsignedBigInteger
      * @return UnsignedBigInteger
      */
@@ -206,7 +214,7 @@ public class UnsignedBigInteger implements Comparable<UnsignedBigInteger>, Clone
 
     /**
      * A.times(B) ~ A * B
-     * adds a with b and returns result
+     * muls a with b and returns result
      * @param other long (must be less or equals than Integer.MAX_VALUE)
      * @return UnsignedBigInteger
      */
@@ -233,7 +241,7 @@ public class UnsignedBigInteger implements Comparable<UnsignedBigInteger>, Clone
 
     /**
      * A.times(B) ~ A * B
-     * adds a with b and returns result
+     * muls a with b and returns result
      * @param other UnsignedBigInteger
      * @return UnsignedBigInteger
      */
@@ -254,7 +262,7 @@ public class UnsignedBigInteger implements Comparable<UnsignedBigInteger>, Clone
 
     /**
      * A.div(B) ~ A / B
-     * adds a with b and returns result
+     * divides a with b and returns result
      * @param other int
      * @return UnsignedBigInteger
      */
@@ -274,15 +282,16 @@ public class UnsignedBigInteger implements Comparable<UnsignedBigInteger>, Clone
 
     /**
      * A.divMod(B) ~ [A / B, A % B]
-     * adds a with b and returns result
+     * divides a with b and returns result
+     * Realizes column division method
      * @param other UnsignedBigInt
-     * @return UnsignedBigInteger[]; UnsignedBigInteger[0] is a result of division,
-     * UnsignedBigInteger[1] is a modulo result
+     * @return DivModResult
      */
     public DivModResult divMod(UnsignedBigInteger other) {
         if (other.equals(zeroNumber)) throw new ArithmeticException("Zero division");
         UnsignedBigInteger res = new UnsignedBigInteger();
         UnsignedBigInteger dividend = this.clone();
+
         while (dividend.isMoreOrEquals(other)) {
             UnsignedBigInteger a1 = dividend.getLast(other.getDigitCount());
             UnsignedBigInteger divisor = other.clone();
@@ -290,6 +299,7 @@ public class UnsignedBigInteger implements Comparable<UnsignedBigInteger>, Clone
                 a1 = dividend.getLast(other.getDigitCount() + 1);
             }
 
+            // finding the upper and lower values for bisection method
             int r = 1;
             while (divisor.times(r).isLessOrEquals(a1)) {
                 r *= 2;
@@ -297,6 +307,7 @@ public class UnsignedBigInteger implements Comparable<UnsignedBigInteger>, Clone
             int lower = r / 2;
             int upper = r;
 
+            // finding r, the next digit in division; using bisection method
             while (true) {
                 r = lower / 2 + upper / 2;
                 if (divisor.times(r).isLessThan(a1)) {
@@ -307,14 +318,21 @@ public class UnsignedBigInteger implements Comparable<UnsignedBigInteger>, Clone
                     break;
                 }
 
+                // in this case algorithm cant completion; this code helps
                 if (upper - lower == 1) {
                     r = lower;
                     break;
                 }
             }
+
+            // adding obtained during algorithm number to result
             res.value.add(0, r);
+
+            // see JavaDoc
             dividend = leftSubtract(dividend, other.times(r));
         }
+
+        // if r == 0, then add 0 to res
         res.addZerosIfNeeded();
         return new DivModResult(res, dividend);
     }
