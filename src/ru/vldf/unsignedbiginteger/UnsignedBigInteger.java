@@ -1,10 +1,12 @@
 package ru.vldf.unsignedbiginteger;
 
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static java.lang.Integer.max;
 
-public class UnsignedBigInteger implements Comparable<UnsignedBigInteger>{
+public class UnsignedBigInteger implements Comparable<UnsignedBigInteger>, Cloneable{
     private static final int base = 1_000_000_000; // max degree of 10, that int can describe
     private static final int digitsCount = 9; // max degree of 10, that int can describe
     private static final UnsignedBigInteger zeroNumber = new UnsignedBigInteger("0");
@@ -52,14 +54,13 @@ public class UnsignedBigInteger implements Comparable<UnsignedBigInteger>{
 
     @Override
     public String toString() {
-        StringBuilder res = new StringBuilder();
-        int k = 0;
-        for (int i : value) {
-            k++;
-            String stringify = k == value.size() ? Integer.toString(i) : String.format("%09d", i); // 9 - base
-            res.insert(0, stringify);
-        }
-        return res.toString();
+        if (value.size() == 0) return "";
+        ArrayList<Integer> r = new ArrayList<>(value);
+        Collections.reverse(r);
+        return r.get(0) + IntStream.range(1, r.size())
+                .mapToObj( n -> String.format("%09d", r.get(n)))
+                .collect(Collectors.joining());
+
     }
 
     private Iterator<Integer> getIterable() {
@@ -100,14 +101,17 @@ public class UnsignedBigInteger implements Comparable<UnsignedBigInteger>{
         return new UnsignedBigInteger(value.subList(max(0, value.size() - n), value.size()));
     }
 
-    public UnsignedBigInteger copy() {
-        UnsignedBigInteger res = new UnsignedBigInteger();
-        res.value.addAll(this.value);
-        return res;
+    @Override
+    public UnsignedBigInteger clone() {
+        try {
+            return (UnsignedBigInteger) super.clone();
+        } catch (CloneNotSupportedException e) {
+            return null;
+        }
     }
 
     private static UnsignedBigInteger leftSubtract(UnsignedBigInteger a, UnsignedBigInteger b) {
-        UnsignedBigInteger bShifted = b.copy();
+        UnsignedBigInteger bShifted = b.clone();
         bShifted.shift(a.getDigitCount() - b.getDigitCount());
         UnsignedBigInteger res = a.subtract(bShifted);
         res.popZeros();
@@ -275,10 +279,10 @@ public class UnsignedBigInteger implements Comparable<UnsignedBigInteger>{
     public DivModResult divMod(UnsignedBigInteger other) {
         if (other.equals(zeroNumber)) throw new ArithmeticException("Zero division");
         UnsignedBigInteger res = new UnsignedBigInteger();
-        UnsignedBigInteger dividend = this.copy();
+        UnsignedBigInteger dividend = this.clone();
         while (dividend.isMoreOrEquals(other)) {
             UnsignedBigInteger a1 = dividend.getLast(other.getDigitCount());
-            UnsignedBigInteger divisor = other.copy();
+            UnsignedBigInteger divisor = other.clone();
             if (a1.isLessThan(other)) {
                 a1 = dividend.getLast(other.getDigitCount() + 1);
             }
@@ -391,5 +395,28 @@ public class UnsignedBigInteger implements Comparable<UnsignedBigInteger>{
     @Override
     public int hashCode() {
         return Objects.hash(value);
+    }
+
+    public static class DivModResult {
+        private UnsignedBigInteger div;
+        private UnsignedBigInteger mod;
+        DivModResult(UnsignedBigInteger div, UnsignedBigInteger mod){
+            this.div = div;
+            this.mod = mod;
+        }
+
+        /**
+         * @return integer part of division of two UnsignedBigInteger
+         */
+        public UnsignedBigInteger getDiv(){
+            return div;
+        }
+
+        /**
+         * @return modulo of two UnsignedBigInteger
+         */
+        public UnsignedBigInteger getMod(){
+            return mod;
+        }
     }
 }

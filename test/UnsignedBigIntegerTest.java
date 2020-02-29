@@ -1,6 +1,5 @@
 import org.junit.jupiter.api.Test;
 import org.junit.Assert;
-import ru.vldf.unsignedbiginteger.DivModResult;
 import ru.vldf.unsignedbiginteger.UnsignedBigInteger;
 
 import java.util.Random;
@@ -60,7 +59,7 @@ class UnsignedBigIntegerTest {
         Assert.assertTrue(a.isLessOrEquals(a));
         Assert.assertTrue(b.isLessOrEquals(b));
         Assert.assertFalse(b.isMoreThan(a));
-        UnsignedBigInteger oneMore = a.copy();
+        UnsignedBigInteger oneMore = a.clone();
         Assert.assertEquals(a, oneMore);
     }
 
@@ -121,13 +120,7 @@ class UnsignedBigIntegerTest {
             UnsignedBigInteger first = new UnsignedBigInteger(generateBigIntString(100));
             UnsignedBigInteger second = new UnsignedBigInteger(generateBigIntString(90));
             UnsignedBigInteger mul = first.times(second);
-            if (!second.toString().equals(mul.div(first).toString())) {
-                System.out.println(first);
-                System.out.println(second);
-                System.out.println(mul);
-                System.out.println(mul.div(first));
-                throw new Exception();
-            }
+            Assert.assertEquals (second.toString(), mul.div(first).toString());
         }
     }
 
@@ -147,7 +140,7 @@ class UnsignedBigIntegerTest {
             UnsignedBigInteger num1 = new UnsignedBigInteger(generateBigIntString(80));
             UnsignedBigInteger num2 = new UnsignedBigInteger(generateBigIntString(100));
 
-            DivModResult divMod = num1.divMod(num2);
+            UnsignedBigInteger.DivModResult divMod = num1.divMod(num2);
             Assert.assertEquals(num1, divMod.getDiv().times(num2).add(divMod.getMod()));
         }
     }
