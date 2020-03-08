@@ -1,6 +1,6 @@
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.Assert;
-import ru.vldf.unsignedbiginteger.UnsignedBigInteger;
+import unsignedbiginteger.UnsignedBigInteger;
 
 import java.util.Random;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -36,7 +36,7 @@ class UnsignedBigIntegerTest {
         for (int n = 0; n < 10; n++) {
             String numStr = generateBigIntString(n * 100);
             UnsignedBigInteger num = new UnsignedBigInteger(numStr);
-            Assert.assertEquals(numStr, num.toString());
+            Assertions.assertEquals(numStr, num.toString());
         }
     }
 
@@ -44,7 +44,7 @@ class UnsignedBigIntegerTest {
     void testNumberFromLongInit() {
         for (int n = 0; n < 10; n++) {
             UnsignedBigInteger num = new UnsignedBigInteger(n * 1000000L);
-            Assert.assertEquals(Long.toString((n * 1000000L)), num.toString());
+            Assertions.assertEquals(Long.toString((n * 1000000L)), num.toString());
         }
     }
 
@@ -55,25 +55,25 @@ class UnsignedBigIntegerTest {
         UnsignedBigInteger a = new UnsignedBigInteger(numberA);
         UnsignedBigInteger b = new UnsignedBigInteger(numberB);
         UnsignedBigInteger bigRes = a.add(b);
-        Assert.assertEquals(sum, bigRes.toString());
+        Assertions.assertEquals(sum, bigRes.toString());
     }
 
     @Test
     void compareTest() {
-        Assert.assertTrue(a.isMoreThan(b));
-        Assert.assertTrue(b.isLessThan(a));
-        Assert.assertTrue(a.isEquals(a));
-        Assert.assertTrue(a.isLessOrEquals(a));
-        Assert.assertTrue(b.isLessOrEquals(b));
-        Assert.assertFalse(b.isMoreThan(a));
+        Assertions.assertTrue(a.isMoreThan(b));
+        Assertions.assertTrue(b.isLessThan(a));
+        Assertions.assertTrue(a.isEquals(a));
+        Assertions.assertTrue(a.isLessOrEquals(a));
+        Assertions.assertTrue(b.isLessOrEquals(b));
+        Assertions.assertFalse(b.isMoreThan(a));
         UnsignedBigInteger oneMore = a.clone();
-        Assert.assertEquals(a, oneMore);
+        Assertions.assertEquals(a, oneMore);
     }
 
     @Test
     void subtractTest() {
         String subtract = "182739812739534112494460707081174401079954897562";
-        Assert.assertEquals(subtract, a.subtract(b).toString());
+        Assertions.assertEquals(subtract, a.subtract(b).toString());
     }
 
     @Test
@@ -86,55 +86,55 @@ class UnsignedBigIntegerTest {
                 assertThrows(ArithmeticException.class, () -> first.subtract(second));
             } else {
                 UnsignedBigInteger diff = first.subtract(second);
-                Assert.assertEquals(second.add(diff), first);
+                Assertions.assertEquals(second.add(diff), first);
             }
         }
     }
 
     @Test
     void mulByIntTest() {
-        Assert.assertEquals("392430759514599788266524859139830103197215133017175376330", (a.times(Integer.MAX_VALUE)).toString());
+        Assertions.assertEquals("392430759514599788266524859139830103197215133017175376330", (a.times(Integer.MAX_VALUE)).toString());
     }
 
     @Test
     void mulTest() {
         String mul = "51738633122894703676225428408097288277879497015410025212588169383320332048601778920";
-        Assert.assertEquals(mul, a.times(b).toString());
-        Assert.assertEquals(
+        Assertions.assertEquals(mul, a.times(b).toString());
+        Assertions.assertEquals(
                 "392430759514599788266524859139830103197215133017175376330",
                 (a.times(new UnsignedBigInteger("2147483647"))).toString()
         );
-        Assert.assertEquals(
+        Assertions.assertEquals(
                 "3924307595538428642179848379664825891111981433368968896317175376330",
                 (a.times(new UnsignedBigInteger("21474836472147483647"))).toString()
         );
-        Assert.assertEquals(
+        Assertions.assertEquals(
                 "39243075955384286422190914556162858699386339192829519066368968896317175376330",
                 (a.times(new UnsignedBigInteger("214748364721474836472147483647"))).toString()
         );
 
         UnsignedBigInteger c = new UnsignedBigInteger("9".repeat(100));
-        Assert.assertTrue(isNumberCorrect(c.times(Integer.MAX_VALUE)));
+        Assertions.assertTrue(isNumberCorrect(c.times(Integer.MAX_VALUE)));
         assertThrows(ArithmeticException.class, () -> isNumberCorrect(c.times((long) Integer.MAX_VALUE + 1)));
     }
 
     @Test
     void addIntTest() {
         UnsignedBigInteger first = new UnsignedBigInteger("900000000000000000");
-        Assert.assertEquals("900000002000000000", first.add(2000000000).toString());
+        Assertions.assertEquals("900000002000000000", first.add(2000000000).toString());
     }
 
     @Test
     void divByIntTest() {
         UnsignedBigInteger first = new UnsignedBigInteger("17027176145819335214232514");
-        Assert.assertEquals("123123182828828182", first.div(138293827).toString());
+        Assertions.assertEquals("123123182828828182", first.div(138293827).toString());
     }
 
     @Test
     void divTest(){
         UnsignedBigInteger first = new UnsignedBigInteger("8110655784862507773201087515783930125888643533703330618528244");
         UnsignedBigInteger second = new UnsignedBigInteger("81989182931802938109238109238");
-        Assert.assertEquals("98923485938490189202131902839438", first.div(second).toString());
+        Assertions.assertEquals("98923485938490189202131902839438", first.div(second).toString());
     }
 
     @Test
@@ -143,7 +143,7 @@ class UnsignedBigIntegerTest {
             UnsignedBigInteger first = new UnsignedBigInteger(generateBigIntString(100));
             UnsignedBigInteger second = new UnsignedBigInteger(generateBigIntString(90));
             UnsignedBigInteger mul = first.times(second);
-            Assert.assertEquals (second.toString(), mul.div(first).toString());
+            Assertions.assertEquals (second.toString(), mul.div(first).toString());
         }
     }
 
@@ -152,7 +152,7 @@ class UnsignedBigIntegerTest {
         UnsignedBigInteger first = new UnsignedBigInteger("100000000000");
         UnsignedBigInteger second = new UnsignedBigInteger("10000000001000000000");
         UnsignedBigInteger div = first.div(second);
-        Assert.assertEquals("0", div.toString());
+        Assertions.assertEquals("0", div.toString());
 
         assertThrows(ArithmeticException.class, () -> new UnsignedBigInteger("100").div(new UnsignedBigInteger("0")));
     }
@@ -164,7 +164,7 @@ class UnsignedBigIntegerTest {
             UnsignedBigInteger num2 = new UnsignedBigInteger(generateBigIntString(100));
 
             UnsignedBigInteger.DivModResult divMod = num1.divMod(num2);
-            Assert.assertEquals(num1, divMod.getDiv().times(num2).add(divMod.getMod()));
+            Assertions.assertEquals(num1, divMod.getDiv().times(num2).add(divMod.getMod()));
         }
     }
 }
