@@ -113,7 +113,7 @@ class UnsignedBigIntegerTest {
                 (a.times(new UnsignedBigInteger("214748364721474836472147483647"))).toString()
         );
 
-        UnsignedBigInteger c = new UnsignedBigInteger("9".repeat(100));
+        UnsignedBigInteger c = new UnsignedBigInteger("9999999");
         Assertions.assertTrue(isNumberCorrect(c.times(Integer.MAX_VALUE)));
         assertThrows(ArithmeticException.class, () -> isNumberCorrect(c.times((long) Integer.MAX_VALUE + 1)));
     }
