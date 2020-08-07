@@ -5,14 +5,14 @@ This class implements long ariphmetic with integer non-negative numbers.
 1. Creating
     ```
     UnsignedBigInteger a = new UnsignedBigInteger("123");
-    UnsignedBigInteger b = new UnsignedBigInteger(100L); may throw ArithmeticException when number in bracets less than zero
+    UnsignedBigInteger b = new UnsignedBigInteger(100L); throws ArithmeticException when number in bracets less than zero
     ```
 2. Operations
     ```
-    a.div(b); // division, may throw ArithmeticException when b == 0
-    a.mul(b); // multiplication
-    a.add(b); // add
-    a.subtrack(b); // subtraction (minus), may throw ArithmeticException when b > a
+    a.div(b); // division, throws ArithmeticException when b == 0
+    a.mul(b); // multiplication a*b
+    a.add(b); // addition a+b
+    a.subtrack(b); // subtraction a-b, throws ArithmeticException when b > a
     ```
 3. Comparation
     ```
